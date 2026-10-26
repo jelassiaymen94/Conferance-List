@@ -1,22 +1,38 @@
-<h1>Conferences</h1>
-
-<div class="cards-container">
-  @for (conf of conferances; track $index) {
-    <div class="card">
-
-      <img
-        src="https://images.unsplash.com/photo-1540575467063-178a50c2df87"
-        alt="Conference"
-      />
-
-      <div class="card-content">
-        <h2>{{ conf.name }}</h2>
-
-        <p>📅 {{ conf.date }}</p>
-        <p>📍 {{ conf.place }}</p>
-
-      </div>
-      <button [routerLink]="['/details', conf.id]">Details</button>
-    </div>
-  }
+<div class="list-header">
+  <h1>Conferences</h1>
+  <button class="btn-add-conference" routerLink="/add-conference">
+    ➕ Add New Conference
+  </button>
 </div>
+
+@if (isLoading()) {
+  <p class="loading-msg">Loading conferences...</p>
+} @else {
+  <div class="cards-container">
+    @for (conf of conferances(); track conf.id || $index) {
+      <div class="card">
+        <img
+          [src]="conf.imageUrl?.startsWith('http') ? conf.imageUrl : 'https://images.unsplash.com/photo-1540575467063-178a50c2df87'"
+          alt="Conference"
+        />
+
+        <div class="card-content">
+          <h2>{{ conf.name || conf.title }}</h2>
+          <p>📅 {{ conf.date }} @if (conf.time) { - {{ conf.time }} }</p>
+          <p>📍 {{ conf.location || conf.place }}</p>
+          @if (conf.price) {
+            <p>💰 {{ conf.price }} TND</p>
+          }
+        </div>
+
+        <div class="card-actions">
+          <button class="btn-details" [routerLink]="['/details', conf.id]">Details</button>
+          <button class="btn-update" [routerLink]="['/update', conf.id]">Update</button>
+          <button class="btn-delete" (click)="deleteConference(conf.id)">Delete</button>
+        </div>
+      </div>
+    } @empty {
+      <p class="empty-msg">No conferences found.</p>
+    }
+  </div>
+}

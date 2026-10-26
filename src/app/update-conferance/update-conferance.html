@@ -1,1 +1,123 @@
-<p>update-conferance works!</p>
+<div class="update-card">
+  <div class="card-header">
+    <span class="badge">EDIT MODE</span>
+    <h1>Update Conference #{{ conferenceId }}</h1>
+  </div>
+
+  <div class="card-body">
+    @if (isLoading()) {
+      <p class="loading">Loading conference data...</p>
+    } @else if (errorMessage()) {
+      <div class="alert alert-danger">
+        {{ errorMessage() }}
+        <button type="button" class="btn-cancel" (click)="goBack()">Back to List</button>
+      </div>
+    } @else {
+      <form [formGroup]="conferenceForm" (ngSubmit)="onSubmit()">
+        <div class="form-group">
+          <label for="name">Title / Name *</label>
+          <input
+            id="name"
+            type="text"
+            formControlName="name"
+            placeholder="e.g. Angular Connect"
+            [class.is-invalid]="name?.invalid && name?.touched"
+          />
+          @if (name?.invalid && name?.touched) {
+            @if (name?.errors?.['required']) {
+              <small class="error-msg">Name is required</small>
+            }
+            @if (name?.errors?.['minlength']) {
+              <small class="error-msg">Name must be at least 3 characters</small>
+            }
+          }
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="date">Date *</label>
+            <input
+              id="date"
+              type="text"
+              formControlName="date"
+              placeholder="e.g. 2026-11-20 or 10/15/2036"
+              [class.is-invalid]="date?.invalid && date?.touched"
+            />
+            @if (date?.invalid && date?.touched) {
+              <small class="error-msg">Date is required</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="time">Time</label>
+            <input
+              id="time"
+              type="text"
+              formControlName="time"
+              placeholder="e.g. 10:00 am"
+            />
+          </div>
+        </div>
+
+        <div class="form-row">
+          <div class="form-group">
+            <label for="location">Location / Place *</label>
+            <input
+              id="location"
+              type="text"
+              formControlName="location"
+              placeholder="e.g. Tunis, Tunisia"
+              [class.is-invalid]="location?.invalid && location?.touched"
+            />
+            @if (location?.invalid && location?.touched) {
+              <small class="error-msg">Location is required</small>
+            }
+          </div>
+
+          <div class="form-group">
+            <label for="price">Price (TND) *</label>
+            <input
+              id="price"
+              type="number"
+              formControlName="price"
+              placeholder="0"
+              [class.is-invalid]="price?.invalid && price?.touched"
+            />
+            @if (price?.invalid && price?.touched) {
+              <small class="error-msg">Valid price is required (>= 0)</small>
+            }
+          </div>
+        </div>
+
+        <div class="form-group">
+          <label for="imageUrl">Image URL</label>
+          <input
+            id="imageUrl"
+            type="text"
+            formControlName="imageUrl"
+            placeholder="https://..."
+          />
+        </div>
+
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea
+            id="description"
+            rows="3"
+            formControlName="description"
+            placeholder="Brief description of the conference..."
+          ></textarea>
+        </div>
+
+        <div class="form-actions">
+          <button type="submit" class="btn-submit" [disabled]="conferenceForm.invalid">
+            Save Changes
+          </button>
+          <button type="button" class="btn-cancel" (click)="goBack()">
+            Cancel
+          </button>
+        </div>
+      </form>
+    }
+  </div>
+</div>

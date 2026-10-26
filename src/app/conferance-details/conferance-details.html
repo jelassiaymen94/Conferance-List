@@ -1,29 +1,61 @@
-{{id()}}
 <div class="card">
-  <div class="card-header">
-    <span class="badge">CONFERENCE</span>
-    <h1>{{ conference.name }}</h1>
-  </div>
-
-  <div class="card-body">
-    <div class="info">
-      <span class="icon">📅</span>
-      <div>
-        <span class="label">Date</span>
-        <p>{{ conference.date }}</p>
-      </div>
+  @if (isLoading()) {
+    <div class="card-body">
+      <p style="text-align: center; color: #64748b; padding: 20px 0;">Loading conference details...</p>
+    </div>
+  } @else if (errorMessage()) {
+    <div class="card-body">
+      <p style="color: #ef4444; font-weight: bold; margin-bottom: 15px;">{{ errorMessage() }}</p>
+      <a (click)="goBack()" class="back-link">← Back to conferences</a>
+    </div>
+  } @else if (conference(); as conf) {
+    <div class="card-header">
+      <span class="badge">CONFERENCE</span>
+      <h1>{{ conf.name || conf.title }}</h1>
     </div>
 
-    <div class="info">
-      <span class="icon">📍</span>
-      <div>
-        <span class="label">Place</span>
-        <p>{{ conference.place }}</p>
+    <div class="card-body">
+      <div class="info">
+        <span class="icon">📅</span>
+        <div>
+          <span class="label">Date</span>
+          <p>{{ conf.date }} @if (conf.time) { - {{ conf.time }} }</p>
+        </div>
+      </div>
+
+      <div class="info">
+        <span class="icon">📍</span>
+        <div>
+          <span class="label">Place</span>
+          <p>{{ conf.location || conf.place }}</p>
+        </div>
+      </div>
+
+      @if (conf.price) {
+        <div class="info">
+          <span class="icon">💰</span>
+          <div>
+            <span class="label">Price</span>
+            <p>{{ conf.price }} TND</p>
+          </div>
+        </div>
+      }
+
+      @if (conf.description) {
+        <div class="info">
+          <span class="icon">📝</span>
+          <div>
+            <span class="label">Description</span>
+            <p>{{ conf.description }}</p>
+          </div>
+        </div>
+      }
+
+      <div class="detail-actions">
+        <a (click)="goBack()" class="back-link">← Back</a>
+        <a [routerLink]="['/update', conf.id]" class="edit-link">✏️ Update</a>
+        <button type="button" (click)="deleteConference()" class="delete-btn">🗑️ Delete</button>
       </div>
     </div>
-
-    <a (click)="goBack()" class="back-link">
-      ← Back to conferences
-    </a>
-  </div>
+  }
 </div>

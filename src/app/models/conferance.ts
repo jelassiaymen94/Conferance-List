@@ -1,9 +1,13 @@
 export interface Conferance {
-  id?: number ;
-  title: string;
-  description: string;
-  location: string;
+  id?: number;
+  name?: string;
+  title?: string;
+  description?: string;
+  location?: string;
+  place?: string;
   date: string;
+  time?: string;
   price: number;
-  nbPlaces: number;
+  nbPlaces?: number;
+  imageUrl?: string;
 }
