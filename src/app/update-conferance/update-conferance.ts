@@ -1,6 +1,6 @@
-import { Component, OnInit, inject, input, signal, ChangeDetectorRef } from '@angular/core';
+import { Component, OnInit, inject, input, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
-import { ActivatedRoute, Router } from '@angular/router';
+import { Router } from '@angular/router';
 import { ConferanceService } from '../services/conferance';
 import { Conferance } from '../models/conferance';
 
@@ -11,18 +11,20 @@ import { Conferance } from '../models/conferance';
   styleUrl: './update-conferance.css',
 })
 export class UpdateConferance implements OnInit {
-  id = input<string>();
+  // Directly bound from route param /update/:id via withComponentInputBinding()
+  id = input.required<string>();
 
   private fb = inject(FormBuilder);
   private conferenceService = inject(ConferanceService);
   private router = inject(Router);
-  private route = inject(ActivatedRoute);
-  private cdr = inject(ChangeDetectorRef);
 
-  conferenceId!: number;
   currentConference?: Conferance;
   isLoading = signal(true);
   errorMessage = signal('');
+
+  get conferenceId(): number {
+    return Number(this.id());
+  }
 
   conferenceForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -51,13 +53,9 @@ export class UpdateConferance implements OnInit {
   }
 
   ngOnInit(): void {
-    const rawId = this.id() || this.route.snapshot.params['id'];
-    this.conferenceId = Number(rawId);
-
     if (isNaN(this.conferenceId)) {
       this.errorMessage.set('Invalid conference ID');
       this.isLoading.set(false);
-      this.cdr.markForCheck();
       return;
     }
 
@@ -74,13 +72,11 @@ export class UpdateConferance implements OnInit {
           imageUrl: conf.imageUrl || '',
         });
         this.isLoading.set(false);
-        this.cdr.markForCheck();
       },
       error: (err) => {
         console.error('Error fetching conference:', err);
         this.errorMessage.set('Conference not found');
         this.isLoading.set(false);
-        this.cdr.markForCheck();
       },
     });
   }
@@ -98,13 +94,10 @@ export class UpdateConferance implements OnInit {
     };
 
     this.conferenceService.updateConferance(this.conferenceId, updatedData).subscribe({
-      next: () => {
-        this.router.navigate(['/list']);
-      },
+      next: () => this.router.navigate(['/list']),
       error: (err) => {
         console.error('Error updating conference:', err);
         this.errorMessage.set('Failed to update conference. Please try again.');
-        this.cdr.markForCheck();
       },
     });
   }

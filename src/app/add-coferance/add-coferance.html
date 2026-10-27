@@ -5,9 +5,9 @@
   </div>
 
   <div class="card-body">
-    @if (errorMessage) {
+    @if (errorMessage()) {
       <div class="alert alert-danger">
-        {{ errorMessage }}
+        {{ errorMessage() }}
       </div>
     }
 

@@ -1,4 +1,4 @@
-import { Component, inject } from '@angular/core';
+import { Component, inject, signal } from '@angular/core';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { Router } from '@angular/router';
 import { ConferanceService } from '../services/conferance';
@@ -15,7 +15,7 @@ export class AddCoferance {
   private conferenceService = inject(ConferanceService);
   private router = inject(Router);
 
-  errorMessage = '';
+  errorMessage = signal('');
 
   conferenceForm: FormGroup = this.fb.group({
     name: ['', [Validators.required, Validators.minLength(3)]],
@@ -54,12 +54,10 @@ export class AddCoferance {
     };
 
     this.conferenceService.addConferance(newConference).subscribe({
-      next: () => {
-        this.router.navigate(['/list']);
-      },
+      next: () => this.router.navigate(['/list']),
       error: (err) => {
         console.error('Error adding conference:', err);
-        this.errorMessage = 'Failed to create conference. Please try again.';
+        this.errorMessage.set('Failed to create conference. Please try again.');
       },
     });
   }
